@@ -16,7 +16,7 @@ Make sure you have the following installed:
 
 1. **Clone the Repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Ankit-khoiwal/Task-Management-System.git
    ```
 
 2. **Navigate to the Application Directory**
