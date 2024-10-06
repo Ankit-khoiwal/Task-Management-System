@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Task;
-
+use App\Models\User;
 
 class TaskController extends Controller
 {
@@ -27,7 +27,7 @@ class TaskController extends Controller
         if ($searchQuery) {
             $tasksQuery->where(function ($query) use ($searchQuery) {
                 $query->where('title', 'like', '%' . $searchQuery . '%')
-                      ->orWhere('description', 'like', '%' . $searchQuery . '%');
+                    ->orWhere('description', 'like', '%' . $searchQuery . '%');
             });
         }
 
@@ -43,7 +43,9 @@ class TaskController extends Controller
     public function create()
     {
         abort_if(!userCan('task.create'), 403);
-        return view('admin.pages.tasks.create');
+
+        $users = User::select('id', 'name')->get();
+        return view('admin.pages.tasks.create', compact('users'));
     }
 
     public function store(Request $request)
@@ -56,6 +58,7 @@ class TaskController extends Controller
             'priority' => 'required|in:low,medium,high',
             'deadline' => 'required|date',
             'document' => 'nullable|file|mimes:pdf,doc,docx,jpeg,jpg,png,gif|max:10240',
+            'user_id' => 'required|integer'
         ]);
 
         $documentPath = null;
@@ -94,7 +97,9 @@ class TaskController extends Controller
             abort(403);
         }
 
-        return view('admin.pages.tasks.edit', compact('task'));
+        $users = User::select('id', 'name')->get();
+
+        return view('admin.pages.tasks.edit', compact('task', 'users'));
     }
 
 
@@ -105,14 +110,18 @@ class TaskController extends Controller
 
         abort_if(!userCan('task.update'), 403);
 
-        $validated = $request->validate([
+        $validated = $request->merge([
+            'user_id' => (int) $request->user_id
+        ])->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'priority' => 'required|in:low,medium,high',
             'deadline' => 'required|date',
             'status' => 'required|in:pending,completed',
             'document' => 'nullable|file|mimes:pdf,doc,docx,jpeg,jpg,png,gif|max:10240',
+            'user_id' => 'required|integer|exists:users,id'
         ]);
+
 
         $documentPath = null;
 

@@ -59,6 +59,40 @@
                                 @enderror
                             </div>
 
+                            @if (auth()->user()->role->name === 'Admin')
+                                <div class="mb-3">
+                                    <label class="form-label" for="basic-icon-default-user_ids">Select User</label>
+                                    <div class="input-group input-group-merge">
+                                        <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                        <select id="basic-icon-default-user_ids" name="user_id" class="form-control">
+                                            <option value="">Select User</option>
+                                            @foreach ($users as $user)
+                                            <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                                {{ $user->name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @error('user_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            @else
+                                <div class="mb-3 d-none">
+                                    <label class="form-label" for="basic-icon-default-user_id">Title</label>
+                                    <div class="input-group input-group-merge">
+                                        <span id="basic-icon-default-title2" class="input-group-text"><i
+                                                class="bx bx-text"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="basic-icon-default-user_id"
+                                            name="user_id" value="{{ auth()->user()->id }}" placeholder="Enter user id" />
+                                    </div>
+                                    @error('user_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            @endif
+
                             <div class="mb-3">
                                 <label class="form-label" for="basic-icon-default-deadline">Deadline</label>
                                 <div class="input-group input-group-merge">
