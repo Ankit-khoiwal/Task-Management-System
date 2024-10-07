@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+Route::redirect('/', '/dashboard', 302);
+
 Route::middleware(['authMiddleware'])->group(function () {
 
     Route::prefix('/dashboard')->name('admin.')->group(function () {
